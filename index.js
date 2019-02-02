@@ -2,11 +2,13 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const moment = require('moment');
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
+const auth = require('./auth');
 const users = require('./users.json');
 let customers = require('./customers.json');
 customers = customers.reduce((obj, elm) => (obj[elm.name] = elm.address, obj), {});
@@ -18,24 +20,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cookieParser());
 app.use(express.static('static'))
 
-app.get('/', (req, res) => res.send('Hello World!'))
-app.get('/show', (req, res) => res.send(orders));
-app.post('/auth', auth)
-app.post('/upload', upload)
-app.get('/search', search)
+app.get('/show', auth.checkCookie, (req, res) => res.send(orders));
+app.post('/auth', auth.verifyUser, auth.setCookie, (req, res) => res.redirect('/home.html'))
+app.post('/upload', auth.checkCookie, upload)
+app.get('/search', auth.checkCookie, search)
 
 server.listen(port, () => console.log(`App listening on port ${port}!`))
-
-/* POST /auth Authentication logic */
-function auth(req, res) {
-    if (typeof req.body == 'object' && typeof req.body.username != 'undefined' && typeof req.body.password != 'undefined') {
-        if (users.some(user => user.username == req.body.username && user.password == req.body.password))
-            res.redirect('/home.html');
-        else res.redirect('/login.html');
-    }else res.redirect('/login.html');
-}
 
 /* POST /upload */
 function upload(req, res) {
