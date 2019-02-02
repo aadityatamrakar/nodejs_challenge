@@ -1,0 +1,18 @@
+[
+  {
+    "name":"Sprocket Corp",
+    "address":"123 Smith Street, County, Country."
+  },
+  {
+    "name":"Doohickey Inc",
+    "address":"404 Unknown Street, County, Country."
+  },
+  {
+    "name":"Thingamajig Industries",
+    "address":"501 Failure Way, County, Country."
+  },
+  {
+    "name":"Super Secret Corp",
+    "address":"520 Unknown Place, Mysterium, Secretania."
+  }
+]

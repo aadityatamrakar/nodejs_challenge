@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" style="height: 100%;">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var products = [{
+        "name": "Simple Widget",
+        "productId": 2
+      },
+      {
+        "name": "Fancy Widget",
+        "productId": 3
+      },
+      {
+        "name": "Basic Widget",
+        "productId": 1
+      },
+      {
+        "name": "Green cover",
+        "productId": 12
+      },
+      {
+        "name": "Blue cover",
+        "productId": 13
+      },
+      {
+        "name": "Grey cover",
+        "productId": 14
+      },
+      {
+        "name": "Replacement sprocket",
+        "productId": 21
+      },
+      {
+        "name": "Replacement cog",
+        "productId": 22
+      },
+      {
+        "name": "Additional red light",
+        "productId": 30
+      },
+      {
+        "name": "Additional blue light",
+        "productId": 31
+      },
+      {
+        "name": "Free sticker",
+        "productId": 40
+      }
+    ]
+
+    var orderSocket = io();
+    var widgetSocket = io();
+    var coverSocket = io();
+    var freebiesSocket = io();
+    orderSocket.emit('subscribe', JSON.stringify([1, 2, 3, 12, 13, 14, 21, 22, 30, 31, 40]));
+    widgetSocket.emit('subscribe', JSON.stringify([1, 2, 3]));
+    coverSocket.emit('subscribe', JSON.stringify([12, 13, 14]));
+    freebiesSocket.emit('subscribe', JSON.stringify([40]));
+    console.log("a");
+    orderSocket.on('order', function(msg) {
+      var data = JSON.parse(msg);
+      var now = new Date();
+      $('#orders').append(now.toDateString() + " " + now.toTimeString() + ": New order of " + data.quantity + " " + lookup(data.productId) + " for " + data.buyer + " at " + data.shippingAddress + "<br />");
+    });
+    widgetSocket.on('order', function(msg) {
+      var data = JSON.parse(msg);
+      var now = new Date();
+      $('#widgets').append(now.toDateString() + " " + now.toTimeString() + ": New order of " + data.quantity + " " + lookup(data.productId) + " for " + data.buyer + " at " + data.shippingAddress + "<br />");
+    });
+    freebiesSocket.on('order', function(msg) {
+      var data = JSON.parse(msg);
+      var now = new Date();
+      $('#stickers').append(now.toDateString() + " " + now.toTimeString() + ": New order of " + data.quantity + " " + lookup(data.productId) + " for " + data.buyer + " at " + data.shippingAddress + "<br />");
+    });
+    coverSocket.on('order', function(msg) {
+      var data = JSON.parse(msg);
+      var now = new Date();
+      $('#covers').append(now.toDateString() + " " + now.toTimeString() + ": New order of " + data.quantity + " " + lookup(data.productId) + " for " + data.buyer + " at " + data.shippingAddress + "<br />");
+    });
+
+    function lookup(id) {
+      return products.filter(function(item) {
+        return item.productId == id
+      })[0].name;
+    }
+  </script>
+  <title>Widgets Inc.</title>
+</head>
+
+<body style="height: 100%;">
+  <div class="container">
+    &nbsp;
+  </div>
+  <div class="container alert alert-info">
+    <div class="row">
+      <div class="col-9">
+        <h1>Widgets Inc.</h1>
+      </div>
+    </div>
+  </div>
+  <div class="container" style="height: 100%;">
+    <div class="row" style="height: 100%;">
+      <div class="col-2 bg-light border">
+
+        <div>
+          <a href="show.html">Show Data</a>
+        </div>
+        <div>
+          <a href="upload.html">Add data</a>
+        </div>
+        <div>
+          <a href="search.html">Search data</a>
+        </div>
+        <div>
+          <strong><a href="live.html">Show live data</a></strong>
+        </div>
+      </div>
+      <div class="col-10">
+
+        <div style=" height:20%; overflow-y: scroll; ">
+          All orders<br />
+          <small><code id="orders">
+            </code></small>
+        </div>
+        <div style=" height:20%; overflow-y: scroll;">
+          Widget Orders<br />
+          <small><code id="widgets"></code></small>
+        </div>
+        <div style=" height:20%; overflow-y: scroll;">
+          Cover Orders<br />
+          <small><code id="covers"></code></small>
+        </div>
+        <div style=" height:20%; overflow-y: scroll;">
+          Free Stickers<br />
+          <small><code id="stickers"></code></small>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+</body>
+
+</html>

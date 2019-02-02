@@ -1,0 +1,46 @@
+[
+  {
+    "name":"Simple Widget",
+    "productId": 2
+  },
+  {
+    "name":"Fancy Widget",
+    "productId": 3
+  },
+  {
+    "name":"Basic Widget",
+    "productId": 1
+  },
+  {
+    "name":"Green cover",
+    "productId": 12
+  },
+  {
+    "name":"Blue cover",
+    "productId": 13
+  },
+  {
+    "name":"Grey cover",
+    "productId": 14
+  },
+  {
+    "name":"Replacement sprocket",
+    "productId": 21
+  },
+  {
+    "name":"Replacement cog",
+    "productId": 22
+  },
+  {
+    "name":"Additional red light",
+    "productId": 30
+  },
+  {
+    "name":"Additional blue light",
+    "productId": 31
+  },
+  {
+    "name":"Free sticker",
+    "productId": 40
+  }
+]

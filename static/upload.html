@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" style="height: 100%;">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+  <title>Widgets Inc.</title>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <script>
+    var itemnum = 0;
+
+    function addExtraItem() {
+      itemnum++;
+      $("#items").append('<div class="input-group mb-3"><div class="input-group-prepend"><label class="input-group-text" for="inputGroupSelect01">Item</label></div><select class="custom-select" id="item' + itemnum +
+        '" name="item"><option value="Simple Widget">Simple Widget</option><option value="Fancy Widget">Fancy Widget</option><option value="Basic Widget">Basic Widget</option><option value="Green cover">Green cover</option><option value="Blue cover">Blue cover</option><option value="Grey cover">Grey cover</option><option value="Replacement sprocket">Replacement sprocket</option><option value="Replacement cog">Replacement cog</option><option value="Additional red light">Additional red light</option><option value="Additional blue light">Additional blue light</option><option value="Free sticker">Free sticker</option></select></div><div class="input-group mb-3"><div class="input-group-prepend"><span class="input-group-text" id="basic-addon1">Quantity</span></div><input type="number" class="form-control" placeholder="0" aria-label="number" aria-describedby="basic-addon1" name="quantity" id="quantity' +
+        itemnum + '">    </div>')
+
+    }
+    $(document).ready(function(){
+      var od = new Date();
+      $('[name="orderDate"]').val(od.toISOString().replace(/-/g, "/").replace(/T.*/, ""));
+      $('[name="orderTime"]').val(od.toTimeString().replace(/:[0-9]{2} .*/, ""));
+      var sd = new Date(od.getTime() + (1000 * 60 * 60 * 24))
+      $('[name="shippingDate"]').val(sd.toISOString().replace(/-/g, "/").replace(/T.*/, ""));
+      $('[name="shippingTime"]').val(sd.toTimeString().replace(/:[0-9]{2} .*/, ""));
+    })
+    function putData() {
+      var data = {};
+      data.buyer = $("#buyer").val();
+      data.items = [];
+      $("[name='item']").each(function(index, item) {
+        var item = {
+          "item": $("#item" + index).val(),
+          "quantity": parseInt($("#quantity" + index).val())
+        }
+        data.items.push(item);
+        var d = new Date();
+        data.orderDate = d.toISOString().replace(/-/g, "/").replace(/T.*/, "");
+        data.orderTime = d.toTimeString().replace(/:[0-9]{2} .*/, "");
+        var d2 = new Date(d.getTime() + (1000 * 60 * 60 * 24))
+        data.shippingDate = d2.toISOString().replace(/-/g, "/").replace(/T.*/, "");
+        data.shippingTime = d2.toTimeString().replace(/:[0-9]{2} .*/, "");
+        var route = Math.floor(Math.random() * 3);
+        if (route === 0) {
+          data.saleRoute = "Internet"
+        } else if (route === 1) {
+          data.saleRoute = "Phone"
+        } else {
+          data.saleRoute = "Post"
+        }
+      });
+      console.log("PUTDATA", data);
+      $.ajax({
+        url: "/upload",
+        method: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json"
+      }).done(function(resp) {
+        alert("Data sent succesfully");
+      }).fail(function() {
+        alert("POST FAILED")
+      })
+    }
+  </script>
+</head>
+
+<body style="height: 100%;">
+  <div class="container">
+    &nbsp;
+  </div>
+  <div class="container alert alert-info">
+    <div class="row">
+      <div class="col-9">
+        <h1>Widgets Inc.</h1>
+      </div>
+    </div>
+  </div>
+  <div class="container" style="height: 100%;">
+    <div class="row" style="height: 100%;">
+      <div class="col-2 bg-light border">
+
+        <div>
+          <a href="show.html">Show Data</a>
+        </div>
+        <div>
+          <strong><a href="upload.html">Add data</a></strong>
+        </div>
+        <div>
+          <a href="search.html">Search data</a>
+        </div>
+        <div>
+          <a href="live.html">Show live data</a>
+        </div>
+      </div>
+      <div class="col-10">
+        <form method="POST" action="/upload">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <label class="input-group-text" for="inputGroupSelect01">Buyer</label>
+            </div>
+            <select class="custom-select" id="buyer" name="buyer">
+              <option selected value="Sprocket Corp">Sprocket Corp</option>
+              <option value="Doohickey Inc">Doohickey Inc</option>
+              <option value="Thingamajig Industries">Thingamajig Industries</option>
+              <option value="Super Secret Corp">Super Secret Corp</option>
+            </select>
+          </div>
+          <div class="well" id="items">
+
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Item</label>
+              </div>
+              <select class="custom-select" id="item0" name="item">
+                <option value="Simple Widget">Simple Widget</option>
+                <option value="Fancy Widget">Fancy Widget</option>
+                <option value="Basic Widget">Basic Widget</option>
+                <option value="Green cover">Green cover</option>
+                <option value="Blue cover">Blue cover</option>
+                <option value="Grey cover">Grey cover</option>
+                <option value="Replacement sprocket">Replacement sprocket</option>
+                <option value="Replacement cog">Replacement cog</option>
+                <option value="Additional red light">Additional red light</option>
+                <option value="Additional blue light">Additional blue light</option>
+                <option value="Free sticker">Free sticker</option>
+              </select>
+            </div>
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Quantity</span>
+              </div>
+              <input type="number" class="form-control" placeholder="0" aria-label="number" aria-describedby="basic-addon1" name="quantity" id="quantity0">
+            </div>
+
+          </div>
+          <a onclick="addExtraItem()" class="btn btn-success">Add extra items</a>
+          <div>
+            Other fields will be populated automatically.
+          </div>
+          <div>
+            <a onclick="putData()" class="form-control btn btn-light">Send data via POST as JSON object</a>
+            <input type="hidden" name="orderDate" />
+            <input type="hidden" name="orderTime"  />
+            <input type="hidden" name="shippingDate" />
+            <input type="hidden" name="shippingTime" />
+            <input type="hidden" name="saleRoute" value="Internet" />
+            <input type="submit" class="form-control" name="Submit" value="Submit via POST parameters">
+          </div>
+        </form>
+      </div>
+    </div>
+
+</body>
+
+</html>

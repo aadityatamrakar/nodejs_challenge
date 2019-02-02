@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en" style="height: 100%;">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+  <title>Widgets Inc.</title>
+  <script>
+    function searchProductId() {
+      var id = $("#productId").val();
+      $.ajax({
+        url: "/search?productId=" + id
+      }).done(function(resp) {
+        var data = JSON.parse(resp)
+        $("#results").empty();
+        $("#results").append(JSON.stringify(data, null, 2).replace(/\n/g, "<br />"));
+      })
+    }
+
+    function searchBuyer() {
+      var id = $("#buyer").val();
+      $.ajax({
+        url: "/search?buyer=" + id
+      }).done(function(resp) {
+        var data = JSON.parse(resp)
+        $("#results").empty();
+        $("#results").append(JSON.stringify(data, null, 2).replace(/\n/g, "<br />"));
+      });
+    }
+
+    function searchTime() {
+      var date = $("#date").val();
+      var time = $("#time").val();
+      var d = new Date(date + " " + time);
+      $.ajax({
+          url: "/search?shippingTarget=" + d.getTime()
+      }).done(function(resp) {
+      var data = JSON.parse(resp)
+      $("#results").empty();
+      $("#results").append(JSON.stringify(data, null, 2).replace(/\n/g, "<br />"));
+    });
+    }
+  </script>
+</head>
+
+<body style="height: 100%;">
+  <div class="container">
+    &nbsp;
+  </div>
+  <div class="container alert alert-info">
+    <div class="row">
+      <div class="col-9">
+        <h1>Widgets Inc.</h1>
+      </div>
+    </div>
+  </div>
+  <div class="container" style="height: 100%;">
+    <div class="row" style="height: 100%;">
+      <div class="col-2 bg-light border">
+
+        <div>
+          <a href="show.html">Show Data</a>
+        </div>
+        <div>
+          <a href="upload.html">Add data</a>
+        </div>
+        <div>
+          <strong><a href="search.html">Search data</a></strong>
+        </div>
+        <div>
+          <a href="live.html">Show live data</a>
+        </div>
+      </div>
+      <div class="col-5">
+        <span>Test queries:</span>
+        <div>
+          Product ID <input class="form-control" id="productId" type="number" /> <a onclick="searchProductId()" class="btn btn-primary">Find order of productId</a>
+        </div><br />
+        <div>
+          Buyer <input class="form-control" id="buyer" type="text" /> <a onclick="searchBuyer()" class="btn btn-primary">Find buyers orders</a>
+        </div><br />
+        <div>
+          shippingTime <input class="form-control" id="date" type="date" /> <input class="form-control" id="time" type="time" /> <a onclick="searchTime()" class="btn btn-primary">Find orders with shipping time after date</a>
+        </div>
+
+      </div>
+      <div class="col=5" id="queryResult">
+        Query results:<br />
+        <code id="results"></code>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

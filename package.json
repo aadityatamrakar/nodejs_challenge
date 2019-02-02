@@ -1,0 +1,16 @@
+{
+  "name": "nodejs_challenge",
+  "version": "1.0.0",
+  "description": "interview challenge test for Node",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "moment": "^2.24.0",
+    "socket.io": "^2.2.0"
+  }
+}
