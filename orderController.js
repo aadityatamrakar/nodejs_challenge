@@ -1,14 +1,15 @@
-let customers = require('./customers.json');
-customers = customers.reduce((obj, elm) => (obj[elm.name] = elm.address, obj), {});
-let products = require('./products.json');
-products = products.reduce((obj, elm) => (obj[elm.name] = elm.productId, obj), {});
-let raw_orders = require('./orders.json');
-let orders = _transformOrders(raw_orders);
+const fs = require('fs');
+const moment = require('moment');
 
 const orderController = {};
 
+orderController.customers = _transformObj(require('./customers.json'), 'address');
+orderController.products = _transformObj(require('./products.json'), 'productId')
+orderController.raw_orders = require('./orders.json');
+orderController.orders = _transformOrders(orderController.raw_orders);
+
 orderController.show = function (req, res) {
-    res.send(orders);
+    res.send(orderController.orders);
 }
 
 orderController.upload = function upload(req, res) {
@@ -33,9 +34,9 @@ orderController.upload = function upload(req, res) {
             Object.assign(order, req.body);
         }
 
-        raw_orders.push(order);
-        fs.writeFileSync('orders.json', JSON.stringify(raw_orders, null, 2));
-        orders = orders.concat(_transformOrders([order]));
+        orderController.raw_orders.push(order);
+        fs.writeFileSync('orders.json', JSON.stringify(orderController.raw_orders, null, 2));
+        orderController.orders = orderController.orders.concat(_transformOrders([order]));
 
         if (req.headers['content-type'] == 'application/json') res.send('ok');
         else res.redirect('/show.html');
@@ -44,7 +45,7 @@ orderController.upload = function upload(req, res) {
 
 orderController.search = function search(req, res) {
     let filter = Object.keys(req.query)[0];
-    let filter_array = orders.filter(order => order[filter] == req.query[filter]);
+    let filter_array = orderController.orders.filter(order => order[filter] == req.query[filter]);
     res.end(JSON.stringify(filter_array));
 }
 
@@ -53,14 +54,18 @@ function _transformOrders(orders) {
         elm.items.forEach(item => {
             ar.push({
                 "buyer": elm.buyer,
-                "productId": products[item.item],
+                "productId": orderController.products[item.item],
                 "quantity": item.quantity,
-                "shippingAddress": customers[elm.buyer],
+                "shippingAddress": orderController.customers[elm.buyer],
                 "shippingTarget": parseInt(moment(`${elm.shippingDate} ${elm.shippingTime}`, 'YYYY/MM/DD HH:mm').format('x'))
             })
         });
         return ar;
     }, [])
+}
+
+function _transformObj(data, val, key = 'name') {
+    return data.reduce((obj, elm) => (obj[elm[key]] = elm[val], obj), {});
 }
 
 module.exports = orderController;
